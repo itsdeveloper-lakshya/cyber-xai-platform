@@ -45,20 +45,22 @@ def run_email_agg():
         bcc_cnt = chunk["bcc"].fillna("").str.count(";") + chunk["bcc"].notna().astype("int32")
         chunk["recipient_count"] = (to_cnt + cc_cnt + bcc_cnt).astype("int32")
 
-        # 2. Attachment count & unusually large email/attachment flag (Section 4.3)
+        # 2. Attachment count & emails_with_attachments (Section C amendment)
         chunk["attachments"] = pd.to_numeric(chunk["attachments"], errors="coerce").fillna(0).astype("int32")
         chunk["size"] = pd.to_numeric(chunk["size"], errors="coerce").fillna(0).astype("int64")
+        chunk["has_attachment"] = (chunk["attachments"] > 0).astype("int32")
         chunk["is_large_email"] = ((chunk["size"] >= LARGE_SIZE_THRESHOLD) | (chunk["attachments"] > 2)).astype("int32")
 
-        # 3. External recipient flag (exfiltration indicator)
+        # 3. External recipient flag (exfiltration to non-company domains)
         chunk["is_external"] = has_external_recipient(chunk)
 
         agg = chunk.groupby(["user", "date"], as_index=False).agg(
             emails_sent=("id", "count"),
+            external_emails=("is_external", "sum"),
+            emails_with_attachments=("has_attachment", "sum"),
             total_recipients=("recipient_count", "sum"),
             total_attachments=("attachments", "sum"),
             large_email_count=("is_large_email", "sum"),
-            external_emails_sent=("is_external", "sum"),
             total_email_bytes=("size", "sum")
         )
         chunks.append(agg)
@@ -67,7 +69,7 @@ def run_email_agg():
     df_agg = pd.concat(chunks, ignore_index=True).groupby(["user", "date"], as_index=False).sum()
     df_agg.rename(columns={"user": "user_id"}, inplace=True)
 
-    int_cols = ["emails_sent", "total_recipients", "total_attachments", "large_email_count", "external_emails_sent"]
+    int_cols = ["emails_sent", "external_emails", "emails_with_attachments", "total_recipients", "total_attachments", "large_email_count"]
     for c in int_cols:
         df_agg[c] = df_agg[c].astype("int32")
 
@@ -75,14 +77,14 @@ def run_email_agg():
     df_agg.to_parquet(OUT_PARQUET, engine="pyarrow", index=False)
 
     print("\n--- SANITY CHECK: agg_email.parquet ---")
-    print(f"Total Raw Emails Read : {total_raw_emails:,}")
-    print(f"Total (user, date)    : {len(df_agg):,}")
-    print(f"Unique Email Users    : {df_agg['user_id'].nunique():,}")
-    print(f"Date Range            : {df_agg['date'].min()} -> {df_agg['date'].max()}")
-    print(f"Total Emails Sent     : {df_agg['emails_sent'].sum():,}")
-    print(f"Total Attachments     : {df_agg['total_attachments'].sum():,}")
-    print(f"Large Emails Flagged  : {df_agg['large_email_count'].sum():,}")
-    print(f"External Emails Sent  : {df_agg['external_emails_sent'].sum():,}")
+    print(f"Total Raw Emails Read    : {total_raw_emails:,}")
+    print(f"Total (user, date)       : {len(df_agg):,}")
+    print(f"Unique Email Users       : {df_agg['user_id'].nunique():,}")
+    print(f"Date Range               : {df_agg['date'].min()} -> {df_agg['date'].max()}")
+    print(f"Total Emails Sent        : {df_agg['emails_sent'].sum():,}")
+    print(f"Total External Emails    : {df_agg['external_emails'].sum():,}")
+    print(f"Emails with Attachments  : {df_agg['emails_with_attachments'].sum():,}")
+    print(f"Total Attachments Count  : {df_agg['total_attachments'].sum():,}")
     print(df_agg.head(5))
 
 if __name__ == "__main__":

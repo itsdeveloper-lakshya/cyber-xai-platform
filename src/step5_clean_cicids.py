@@ -134,8 +134,9 @@ def clean_all_cicids():
     df_full.sort_values("timestamp", inplace=True)
     df_full.reset_index(drop=True, inplace=True)
 
-    # Create auto-incrementing integer flow_id as first column
+    # Section C Addendum: row_id surrogate primary key + flow_id
     df_full.insert(0, "flow_id", np.arange(1, len(df_full) + 1, dtype=np.int32))
+    df_full.insert(0, "row_id", np.arange(1, len(df_full) + 1, dtype=np.int64))
 
     print(f"Saving final Parquet to {OUT_PARQUET}...")
     df_full.to_parquet(OUT_PARQUET, engine="pyarrow", index=False)
