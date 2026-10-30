@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cyber Sentinel DLP - Test & Demo Sandbox</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #1e293b;
+      background: #f8fafc;
+    }
+    h1 { color: #0f172a; margin-bottom: 8px; }
+    p.sub { color: #64748b; margin-top: 0; }
+    .card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    textarea {
+      width: 100%;
+      height: 140px;
+      box-sizing: border-box;
+      padding: 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+    textarea:focus { outline: none; border-color: #2563eb; }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    button.sample-btn {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    button.sample-btn:hover { background: #e2e8f0; }
+    .badge-high { color: #b91c1c; font-weight: bold; }
+    .badge-med { color: #b45309; font-weight: bold; }
+    .badge-low { color: #15803d; font-weight: bold; }
+    .dropzone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      background: #f8fafc;
+      color: #64748b;
+      margin-top: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>🛡️ Cyber Sentinel DLP: Test Sandbox</h1>
+  <p class="sub">Use this page to test copy/pasting sensitive vs normal text with the loaded Chrome Extension.</p>
+
+  <div class="card">
+    <h3>1. Paste Test Area</h3>
+    <p style="font-size: 0.9rem; color: #475569;">Click any sample button below to copy text to your clipboard, then <strong>paste (Ctrl + V)</strong> into the box:</p>
+    
+    <textarea id="paste-box" placeholder="Paste your text here to test the extension..."></textarea>
+    
+    <div class="btn-group">
+      <button class="sample-btn" onclick="copySample('sample-private-key')">
+        📋 Copy <span class="badge-high">Private Key (High Risk - Blocked)</span>
+      </button>
+      <button class="sample-btn" onclick="copySample('sample-aws-key')">
+        📋 Copy <span class="badge-high">AWS Access Key (High Risk - Blocked)</span>
+      </button>
+      <button class="sample-btn" onclick="copySample('sample-confidential')">
+        📋 Copy <span class="badge-med">Confidential Memo (Medium Risk - Warned)</span>
+      </button>
+      <button class="sample-btn" onclick="copySample('sample-normal')">
+        📋 Copy <span class="badge-low">Normal Meeting Note (Low Risk - Allowed)</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>2. File Upload Test Area</h3>
+    <p style="font-size: 0.9rem; color: #475569;">Test uploading or dragging a file (e.g. <code>.pem</code>, <code>.key</code>, <code>.env</code> vs <code>.txt</code>):</p>
+    <input type="file" id="file-input" />
+    <div class="dropzone" id="drop-area">
+      Or drag and drop files here to test drop interception
+    </div>
+  </div>
+
+  <!-- Hidden templates for easy copy -->
+  <div id="sample-private-key" style="display:none;">-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEA0rK...mock-private-key-data...
+-----END RSA PRIVATE KEY-----</div>
+
+  <div id="sample-aws-key" style="display:none;">aws_access_key_id = AKIAIOSFODNN7EXAMPLE
+aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</div>
+
+  <div id="sample-confidential" style="display:none;">CONFIDENTIAL & PROPRIETARY:
+Project Titan internal architecture and Q4 executive revenue estimates.
+Do not distribute outside of executive leadership team.</div>
+
+  <div id="sample-normal" style="display:none;">Hi team, please find the minutes from our daily standup meeting attached. Let me know if you have any questions regarding sprint planning.</div>
+
+  <script>
+    function copySample(id) {
+      const text = document.getElementById(id).innerText.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied sample to clipboard! Now press Ctrl+V inside the text area.");
+      });
+    }
+
+    const dropArea = document.getElementById('drop-area');
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+    function preventDefaults (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  </script>
+</body>
+</html>

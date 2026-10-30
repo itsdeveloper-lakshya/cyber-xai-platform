@@ -1,0 +1,62 @@
+{
+  "model_version": 1,
+  "algorithm": "XGBoost",
+  "feature_list": [
+    "logon_count",
+    "after_hours_logons",
+    "usb_connects",
+    "files_copied",
+    "emails_sent",
+    "websites_visited",
+    "distinct_pcs",
+    "after_hours_usb_connects",
+    "external_emails",
+    "emails_with_attachments",
+    "z_30d_logon_count",
+    "z_30d_after_hours_logons",
+    "z_30d_usb_connects",
+    "z_30d_files_copied",
+    "z_30d_emails_sent",
+    "z_30d_websites_visited",
+    "trend_7d_mean_files_z",
+    "trend_7d_mean_usb_z",
+    "trend_ratio_7d_to_30d_files",
+    "peer_ratio_files_copied",
+    "peer_ratio_logon_count",
+    "peer_ratio_emails_sent",
+    "peer_ratio_usb_connects",
+    "frozen_z_files_copied",
+    "frozen_z_usb_connects",
+    "frozen_z_after_hours_logons",
+    "frozen_z_emails_sent",
+    "is_weekend",
+    "after_hours_share",
+    "any_usb_today",
+    "days_since_last_active",
+    "day_of_week",
+    "active_days_past_30",
+    "days_since_first_seen",
+    "flag_activity_after_leave"
+  ],
+  "train_date_range": [
+    "2010-01-02",
+    "2010-12-17"
+  ],
+  "val_date_range": [
+    "2010-12-18",
+    "2011-03-02"
+  ],
+  "test_date_range": [
+    "2011-03-03",
+    "2011-05-17"
+  ],
+  "metrics": {
+    "pr_auc": 0.9190214575396507,
+    "precision": 0.8870967741935484,
+    "recall": 0.9243697478991597,
+    "f1": 0.9053497942386831,
+    "insider_recall": 0.875,
+    "threshold": 0.8703200817108154
+  },
+  "file_reference": "module2/ml/artifacts/behavior_xgboost_v1.json"
+}

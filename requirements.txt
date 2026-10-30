@@ -1,6 +1,20 @@
+# Module 1 core dependencies
 pandas==2.2.2
 numpy==1.26.4
 SQLAlchemy==2.0.30
 psycopg2-binary==2.9.9
 pyarrow==16.1.0
 python-dotenv==1.0.1
+
+# Module 2 backend dependencies
+Django==5.0.6
+djangorestframework==3.15.1
+django-cors-headers==4.3.1
+redis==5.0.4
+
+# Module 2 machine learning & testing
+scikit-learn==1.4.2
+xgboost==2.0.3
+Faker==25.0.1
+pytest==8.2.0
+pytest-django==4.8.0
