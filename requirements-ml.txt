@@ -1,0 +1,12 @@
+# Module 4 ML Dependencies (Section 3.2)
+lightgbm==4.7.0
+matplotlib==3.11.2
+pyyaml==6.0.3
+xgboost==2.0.3
+scikit-learn==1.4.2
+pandas==2.2.2
+numpy==1.26.4
+SQLAlchemy==2.0.30
+psycopg2-binary==2.9.9
+joblib==1.4.2
+pytest==8.2.0

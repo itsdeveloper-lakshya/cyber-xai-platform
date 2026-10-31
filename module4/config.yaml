@@ -1,0 +1,72 @@
+# Module 4 Configuration File (Section 3.3)
+# All tunable hyperparameters, window lengths, label thresholds, and alert parameters live here.
+
+database:
+  table_name: "network_flows_clean"
+  connection_url: "postgresql://cyber_admin:local_dev_pass_123@localhost:5432/cyber_xai_db"
+
+windows:
+  candidate_sizes_sec: [60, 300, 600] # 1 min, 5 min, 10 min
+  default_size_sec: 300 # 5 minutes
+
+horizons:
+  candidate_k: [1, 3, 5]
+  default_k: 1
+
+labels:
+  # Surge definition: Idea B + E
+  attack_share_threshold: 0.05 # 5% (captures both volumetric floods and SSH/FTP brute force)
+  flow_count_floor: 30
+  calm_history_windows: 3 # window t is calm if neither t nor last 3 windows were surge
+
+features:
+  lag_steps: [1, 2, 3]
+  rolling_window_l: 5
+  correlation_threshold: 0.95
+  max_flow_duration_us: 120000000 # 120 seconds
+
+splits:
+  default_scheme: "scheme_a" # scheme_a: chronological per day, scheme_b: leave-one-day-out
+  chronological:
+    train_pct: 0.60
+    val_pct: 0.20
+    test_pct: 0.20
+  purge_k_windows: true
+
+models:
+  random_seed: 42
+  scale_pos_weight_mode: "sqrt" # none, sqrt, full
+  xgboost:
+    max_depth: 3
+    learning_rate: 0.05
+    n_estimators: 300
+    subsample: 0.8
+    colsample_bytree: 0.8
+    min_child_weight: 3
+    reg_lambda: 1.0
+    early_stopping_rounds: 25
+  lightgbm:
+    num_leaves: 15
+    learning_rate: 0.05
+    n_estimators: 300
+    subsample: 0.8
+    colsample_bytree: 0.8
+    min_child_samples: 10
+    reg_lambda: 1.0
+    early_stopping_rounds: 25
+
+calibration:
+  method: "platt" # Platt scaling (logistic regression on score)
+
+alerts:
+  thresholds:
+    watch: 0.35
+    warning: 0.60
+    critical: 0.80
+  hysteresis_confirmations: 2 # level changes only after 2 consecutive confirmations
+  budget_per_day:
+    warning_max: 6
+    critical_max: 2
+
+replay:
+  default_speed_multiplier: 5.0

@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "feature_names": [
+    "log_char_len",
+    "log_line_cnt",
+    "digit_ratio",
+    "upper_ratio",
+    "punct_ratio",
+    "ws_ratio",
+    "entropy",
+    "token_entropy",
+    "avg_line_len",
+    "code_sym_density",
+    "code_kw_density",
+    "delim_consistency",
+    "numeric_token_share",
+    "log_regex_hits",
+    "max_rule_weight",
+    "distinct_categories",
+    "emails_phones_count",
+    "has_confidential_marker"
+  ],
+  "means": [
+    5.2, 1.8, 0.08, 0.06, 0.09, 0.16, 4.2, 1.2, 45.0, 0.02, 0.01, 0.1, 0.05, 0.2, 0.1, 0.2, 0.1, 0.05
+  ],
+  "stds": [
+    1.5, 1.2, 0.12, 0.08, 0.08, 0.07, 0.8, 1.5, 30.0, 0.04, 0.03, 0.3, 0.10, 0.6, 0.3, 0.5, 0.6, 0.22
+  ],
+  "weights": [
+    0.35, 0.25, 0.85, 0.40, 0.65, -0.20, 0.75, 1.10, 0.15, 0.60, 0.50, 0.70, 0.80, 1.20, 1.40, 1.10, 0.90, 1.50
+  ],
+  "bias": -1.8,
+  "suggested_thresholds": {
+    "low": 0.35,
+    "medium": 0.70
+  }
+}

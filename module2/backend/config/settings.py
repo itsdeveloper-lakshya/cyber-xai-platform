@@ -5,8 +5,10 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Add apps directory to sys.path so apps can be imported directly
+# Add apps directories to sys.path
 sys.path.insert(0, str(BASE_DIR / 'apps'))
+sys.path.insert(0, str(BASE_DIR.parent.parent / 'module3' / 'backend' / 'apps'))
+sys.path.insert(0, str(BASE_DIR.parent.parent / 'module4' / 'backend' / 'apps'))
 
 # Load root .env
 ROOT_DIR = BASE_DIR.parent.parent
@@ -14,7 +16,9 @@ load_dotenv(ROOT_DIR / '.env')
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'local-dev-insecure-key-change-in-production-12345')
 DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = [h.strip() for h in os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')]
+ALLOWED_HOSTS = [h.strip() for h in os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver').split(',')]
+if 'testserver' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('testserver')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -34,6 +38,12 @@ INSTALLED_APPS = [
     'distribution',
     'feedback',
     'behavior',
+
+    # Module 3 Ingestion App
+    'agent_ingest',
+
+    # Module 4 Network Forecasting App
+    'network',
 ]
 
 MIDDLEWARE = [
@@ -103,7 +113,7 @@ REST_FRAMEWORK = {
     }
 }
 
-# CORS Configuration for Extension & Analyst UI
+# CORS Configuration
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = [
     'authorization',
@@ -112,6 +122,8 @@ CORS_ALLOW_HEADERS = [
     'x-enrollment-code',
 ]
 
-# Redis & Enrollment Configuration
+# Redis & Shared Configurations
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
 DEVICE_ENROLLMENT_CODE = os.getenv('DEVICE_ENROLLMENT_CODE', 'CYBER-ENROLL-DEV-2026')
+STREAM_PASTE_EVENTS = 'paste_events'
+STREAM_AGENT_EVENTS = 'agent_events'

@@ -66,8 +66,9 @@ class BehDailyScore(models.Model):
 
 class BehRuleFlag(models.Model):
     """
-    beh_rule_flag (Section 5.1 & 7.7)
-    Hard flags with plain-language reasons produced by the rule engine.
+    beh_rule_flag (Section 5.1 & Module 3 Section 5.1 Amendment)
+    Hard flags with plain-language reasons produced by rule engines.
+    Includes source_module to distinguish between 'module2' (browser) and 'agent' (endpoint).
     """
     id = models.BigAutoField(primary_key=True)
     user_id = models.CharField(max_length=32)
@@ -80,6 +81,8 @@ class BehRuleFlag(models.Model):
         ("critical", "Critical")
     ])
     reason_text = models.TextField()
+    source_module = models.CharField(max_length=10, default="module2", help_text="'module2' or 'agent'")
+    mitre_technique = models.CharField(max_length=16, null=True, blank=True, help_text="e.g. T1052.001")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -87,4 +90,5 @@ class BehRuleFlag(models.Model):
         indexes = [
             models.Index(fields=["user_id", "date"]),
             models.Index(fields=["date"]),
+            models.Index(fields=["source_module", "date"]),
         ]

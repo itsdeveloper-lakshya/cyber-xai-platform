@@ -1,0 +1,10 @@
+# Module 3 Windows Endpoint Agent Requirements (Section 3.2)
+pywin32==306
+wmi==1.5.1
+psutil==5.9.8
+watchdog==4.0.1
+requests==2.32.3
+keyring==24.3.1
+regex==2024.5.15
+pystray==0.19.5
+Pillow==10.3.0
